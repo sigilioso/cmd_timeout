@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 import subprocess, threading
 
-class CmdTimeout(object):
+class CommandTimeout(object):
     """
     Class to easily run an external command setting an timeout.
     """
-    def __init__(self, cmd):
+    def __init__(self, cmd, timeout=None):
         """
-        Store the command to run
+        Creates an instance storing the cmd to run. If timeout is given, then
+        runs the command.
         """
         self.cmd = cmd
         self.process = None
+        if timeout:
+            self.run(timeout)
 
     def run(self, timeout):
         """
