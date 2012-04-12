@@ -5,23 +5,35 @@ class CommandTimeout(object):
     """
     Class to easily run an external command setting an timeout.
     """
-    def __init__(self, cmd, timeout=None):
+    def __init__(self, cmd, timeout=None, env=None):
         """
         Creates an instance storing the cmd to run. If timeout is given, then
         runs the command.
+        params:
+            cmd: command to execute.
+            timeout: maxiumun execution time for the command.
+            env: dictionary which is used to set specifics environ variables.
+                Example: ``env={'PYTHONPATH':/folder/with/pythonstuff'}``.
         """
         self.cmd = cmd
         self.process = None
+        self.env = env
+        if env:
+            import os
+            self.env = os.environ
+            self.env.update(env)
         if timeout:
             self.run(timeout)
 
     def run(self, timeout):
         """
-        Runs cmd in a separated thread, if after <time> seconds it has not
+        Runs cmd in a separated thread, if after ``time`` seconds it has not
         finished, the thread is killed.
         """
         def run_cmd():
-            self.process = subprocess.Popen(self.cmd, shell=True)
+            self.process = subprocess.Popen(self.cmd, shell=True)\
+                    if not self.env else\
+                        subprocess.Popen(self.cmd, shell=True, env=self.env)
             self.process.wait()
         # Execute the command
         thread = threading.Thread(target=run_cmd)
