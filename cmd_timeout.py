@@ -31,9 +31,8 @@ class CommandTimeout(object):
         finished, the thread is killed.
         """
         def run_cmd():
-            self.process = subprocess.Popen(self.cmd, shell=True)\
-                    if not self.env else\
-                        subprocess.Popen(self.cmd, shell=True, env=self.env)
+            self.process = (subprocess.Popen(self.cmd, shell=True) if not self.env else
+                            subprocess.Popen(self.cmd, shell=True, env=self.env))
             self.process.wait()
         # Execute the command
         thread = threading.Thread(target=run_cmd)
